@@ -186,7 +186,7 @@ prof.export_chrome_trace("trace.json")
 |--------------|--------------------|--------------------|
 | 45 → 45K subjects | Init time, metadata size | Arrow cache; sharded Parquet at 100K+ |
 | 10× resolution | Memory, decode time | Keep current resolution for training; tiled loading if needed |
-| 3rd modality | Code changes | Add encoder + dataset; registry pattern | 
+| 3rd modality | Code changes | Add encoder + dataset; registry pattern |
 | Multi-node | Coordination, paths | DDP; shared storage; `DATA_ROOT`/`CHECKPOINT_DIR` |
 | 1000 RPS inference | Batch + latency | ONNX; TorchServe; dynamic batching |
 

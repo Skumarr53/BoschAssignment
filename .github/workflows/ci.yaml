@@ -1,5 +1,15 @@
+# [Phase 5b] CI pipeline: lint, test, build, security
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+name: CI
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
 env:
   UV_COMPILE_BYTECODE: '0'
+
 jobs:
   build:
     name: Build
@@ -90,11 +100,3 @@ jobs:
         run: uv run pytest tests/integration/ -v
       - name: Performance tests
         run: uv run pytest tests/performance/ -v -m performance
-# [Phase 5b] CI pipeline: lint, test, build, security
-# Plan: bosch_mlops_evaluation_plan_7132afe9
-name: CI
-'on':
-  pull_request:
-    branches: [main, develop]
-  push:
-    branches: [main, develop]

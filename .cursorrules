@@ -8,7 +8,7 @@
 ---
 
 ## 1. Plan as Source of Truth
-- **Reference**: `/home/sanky/.cursor/plans/bosch_mlops_evaluation_plan_7132afe9.plan.md` and current phase paln 
+- **Reference**: `/home/sanky/.cursor/plans/bosch_mlops_evaluation_plan_7132afe9.plan.md` and current phase paln
 - **Mandatory**: Before any code generation, read the Plan to verify Phase, file path, and MLOps weights.
 - **Strictness**: Reject any user request that contradicts the Plan unless a "Plan Update" is explicitly requested.
 - **Traceability**: Mention the specific Plan Phase (e.g., [Phase 1c]) in code comments/docstrings.
@@ -22,7 +22,7 @@ Before finalizing:
 3. `pytest` — run existing tests to ensure NO regressions in previous Phases.
 4. **Security**: Ensure Pydantic models validate all external file paths/inputs.
 5. **No TODOs**: Replace placeholders with functional, production-ready logic.
-6. Dont stop until all flaws and issues are fixed 
+6. Dont stop until all flaws and issues are fixed
 
 ---
 
@@ -58,7 +58,7 @@ Act as a **Prickly Senior Reviewer**. Before outputting:
 ## 6. Engineering Guardrails (The "Anti-Hallucination" Rules)
 
 ### Rule 1: Zero Logic Duplication
-- **Check**: Before writing a parser or discovery tool, search `src/` for existing logic. 
+- **Check**: Before writing a parser or discovery tool, search `src/` for existing logic.
 - **Action**: Centralize shared logic in `utils/` or `data/base.py`. Duplicate logic is a failure.
 
 ### Rule 2: Production Control Flow

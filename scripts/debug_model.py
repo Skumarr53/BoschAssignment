@@ -136,9 +136,10 @@ def main() -> int:
         logits = model(fingerprint, iris)
 
     print(f"Forward pass OK: logits shape {logits.shape}")
-    assert logits.shape == (fingerprint.shape[0], model.num_classes), (
-        f"Expected logits (B, {model.num_classes}), got {logits.shape}"
-    )
+    assert logits.shape == (
+        fingerprint.shape[0],
+        model.num_classes,
+    ), f"Expected logits (B, {model.num_classes}), got {logits.shape}"
 
     if not args.persist and args.data_root is None:
         import shutil
