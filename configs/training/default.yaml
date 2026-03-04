@@ -1,0 +1,8 @@
+# Training configuration [Phase 3d/3e]
+seed: 42
+epochs: 15
+learning_rate: 0.0005
+checkpoint_dir: checkpoints
+# [Phase 3e] AMP + gradient accumulation
+use_amp: true
+gradient_accumulation_steps: 1

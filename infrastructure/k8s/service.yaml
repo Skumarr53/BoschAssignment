@@ -1,0 +1,20 @@
+# [Phase 6b] ClusterIP Service for biometric workload
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+# Placeholder for future metrics/health; training does not expose ports
+apiVersion: v1
+kind: Service
+metadata:
+  name: biometric-mlops
+  namespace: biometric-mlops
+  labels:
+    app: biometric-mlops
+spec:
+  type: ClusterIP
+  selector:
+    app: biometric-mlops
+  ports:
+    - name: metrics
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  # Note: Training container does not listen; add health server when needed

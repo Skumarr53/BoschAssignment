@@ -1,0 +1,22 @@
+# [Phase 6a] Development Dockerfile - dev deps, volume mounts for live edit
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY pyproject.toml uv.lock ./
+RUN pip install uv && uv sync --frozen
+
+# Source/configs mounted via compose; ensure dirs exist for optional local data
+RUN mkdir -p /app/Data /app/checkpoints
+
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app/src"
+
+# Default: run training (override in compose for infer, benchmark, etc.)
+ENTRYPOINT ["python", "scripts/train.py"]

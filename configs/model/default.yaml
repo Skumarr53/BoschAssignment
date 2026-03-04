@@ -1,0 +1,4 @@
+# Model configuration (Hydra instantiation)
+_target_: biometric.models.fusion_model.MultimodalFusionModel
+num_classes: 45
+embedding_dim: 256

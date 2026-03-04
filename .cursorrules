@@ -1,0 +1,92 @@
+# Bosch MLOps Evaluation — Project Cursor Rules
+
+## 0. Optional Tools Strategy (Brownie Points)
+- **Intent**: Proactively use the **Good-to-Have (Not Mandatory)** technologies from Instructions to showcase capability and earn brownie points.
+- **Principle**: "Intentional choices and clear explanations matter more than breadth." Use where appropriate, not everywhere.
+- **Action**: When implementing features, consider whether an optional tool adds value; prefer it over minimal solutions when justified.
+
+---
+
+## 1. Plan as Source of Truth
+- **Reference**: `/home/sanky/.cursor/plans/bosch_mlops_evaluation_plan_7132afe9.plan.md` and current phase paln 
+- **Mandatory**: Before any code generation, read the Plan to verify Phase, file path, and MLOps weights.
+- **Strictness**: Reject any user request that contradicts the Plan unless a "Plan Update" is explicitly requested.
+- **Traceability**: Mention the specific Plan Phase (e.g., [Phase 1c]) in code comments/docstrings.
+
+---
+
+## 2. Quality Gates & "Dry-Run" Validation
+Before finalizing:
+1. `ruff check` & `ruff format` — fix all lint/style issues automatically.
+2. `mypy --strict` — ensure 100% type coverage for core biometric logic.
+3. `pytest` — run existing tests to ensure NO regressions in previous Phases.
+4. **Security**: Ensure Pydantic models validate all external file paths/inputs.
+5. **No TODOs**: Replace placeholders with functional, production-ready logic.
+6. Dont stop until all flaws and issues are fixed 
+
+---
+
+## 3. Tooling & Environment
+- **Runtime**: Always use `uv run` for scripts to ensure environment isolation.
+- **Configs**: Use Hydra for all hyperparameters; NO hardcoded constants in `src/`.
+- **Logging**: Use the project's `structlog` wrapper; NO print statements.
+- **Data**: Use `pyarrow` for metadata; NO manual CSV/JSON state management.
+
+---
+
+## 4. Skill Orchestration (Context Injection)
+skills source: /home/sanky/.cursor/skills
+- **Auto-Load**: Match task to skill (e.g., data work -> `ray-data`, `pyarrow-parquet`).
+- **Context**: If a skill is missing, prioritize official documentation over generic patterns.
+- **Constraint**: Do not suggest libraries not listed in `pyproject.toml` without justification.
+
+**Response footer**:
+```
+[Loaded] Rules: <list> | Skills: <list>
+```
+---
+
+## 5. Harsh Self-Critique & "Reviewer" Persona
+Act as a **Prickly Senior Reviewer**. Before outputting:
+- **Refinement**: Did I use `pathlib` over `os.path`? Is the logging structured?
+- **Efficiency**: Is the data loading "lazy"? Is the preprocessing parallelized?
+- **MLOps**: Are seeds set? Is MLflow tracking the right metrics?
+- **Iteration**: If the draft feels like "generic Python," rewrite it to be "High-Perf MLOps."
+
+---
+
+## 6. Engineering Guardrails (The "Anti-Hallucination" Rules)
+
+### Rule 1: Zero Logic Duplication
+- **Check**: Before writing a parser or discovery tool, search `src/` for existing logic. 
+- **Action**: Centralize shared logic in `utils/` or `data/base.py`. Duplicate logic is a failure.
+
+### Rule 2: Production Control Flow
+- **Error Handling**: Use custom exceptions (e.g., `BiometricDataError`) over generic `Exception`.
+- **Validation**: Use Pydantic `field_validator` for all filename/metadata parsing.
+- **Determinism**: Every `glob` or `iterdir` call must be followed by `.sorted()`.
+
+### Rule 3: Parallel Preprocessing Integration
+- **Task 3 (Instructions)**: Parallel or distributed preprocessing must be integrated into the training pipeline.
+- **Config**: `data.use_parallel_preprocess: true` enables Ray (default) or multiprocessing at DataModule setup.
+- **Toggle**: `data.backend: ray | multiprocessing` — use multiprocessing when Ray is not installed.
+
+### Rule 4: Test-Driven Readiness
+- **Fixtures**: Use `pytest` fixtures for temporary directories and synthetic `.BMP` files.
+- **Coverage**: New features MUST include a basic unit test in `tests/` to prove integration.
+- **Integration**: Ensure every new module is imported and used in the main pipeline.
+
+---
+
+## 7. The Socratic Learning Engine
+For every pattern discussed in the reponse, include a **"Deep Dive"** block:
+
+### The "Why" (Trade-offs)
+- Compare the chosen tool (e.g., `uv` vs `pip`) or pattern (Composition vs Inheritance).
+
+### Socratic Checkpoint
+- Ask 1-2 "Stress Test" questions: "How does this scale to 10,000 subjects?" or "What happens if a file is corrupted mid-read?" with answer in simple tech language
+
+### Beginner Bridge
+- Define 1-2 advanced terms used (e.g., "Memory-mapping," "Vectorized compute").
+- **Reference**: Point to specific lines in the existing codebase for consistency.

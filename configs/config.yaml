@@ -1,0 +1,12 @@
+# Root config (Hydra-compatible when hydra-core installed)
+defaults:
+  - _self_
+  - infrastructure/local
+  - data/default
+  - model/default
+  - training/default
+
+# Keep cwd at project root so data_root: Data resolves correctly
+hydra:
+  job:
+    chdir: false

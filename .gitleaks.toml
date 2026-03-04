@@ -1,0 +1,22 @@
+# [Phase 6e] Gitleaks config - extend default, allowlist build/test artifacts
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+title = "Biometric MLOps Gitleaks"
+
+[extend]
+useDefault = true
+
+# Global allowlist: paths to skip (no secrets expected)
+[[allowlists]]
+description = "Build artifacts, caches, and generated files"
+paths = [
+  '''\.venv/''',
+  '''__pycache__/''',
+  '''\.mypy_cache/''',
+  '''\.pytest_cache/''',
+  '''\.ruff_cache/''',
+  '''\.terraform/''',
+  '''\.benchmarks/''',
+  '''htmlcov/''',
+  '''\.coverage''',
+  '''\.git/''',
+]

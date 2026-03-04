@@ -1,0 +1,9 @@
+Biometric MLOps has been deployed.
+
+Namespace: {{ include "biometric-mlops.namespace" . }}
+Release: {{ .Release.Name }}
+
+Next steps:
+1. Populate the data PVC with your dataset
+2. Check pod status: kubectl get pods -n {{ include "biometric-mlops.namespace" . }} -l app=biometric-mlops
+3. View logs: kubectl logs -n {{ include "biometric-mlops.namespace" . }} -l app=biometric-mlops -f

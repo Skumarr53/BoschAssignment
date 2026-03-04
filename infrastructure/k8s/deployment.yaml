@@ -1,0 +1,116 @@
+# [Phase 6b] Deployment for biometric training workload
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+# Uses exec probes (no HTTP server); read-only root + writable checkpoints PVC
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biometric-mlops
+  namespace: biometric-mlops
+  labels:
+    app: biometric-mlops
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: biometric-mlops
+  template:
+    metadata:
+      labels:
+        app: biometric-mlops
+    spec:
+      # [Phase 6e] Security: non-root, read-only root filesystem
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: biometric
+          # Replace with actual image (e.g. ghcr.io/owner/bosch-biometric:v1)
+          image: bosch-biometric:latest
+          imagePullPolicy: IfNotPresent
+
+          command:
+            - python
+            - scripts/train.py
+          args:
+            - infrastructure=cluster
+
+          env:
+            - name: PYTHONPATH
+              value: /app/src
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: biometric-config
+                  key: LOG_LEVEL
+            - name: DATA_ROOT
+              value: /app/Data
+            - name: CHECKPOINT_DIR
+              value: /app/checkpoints
+
+          ports:
+            - name: metrics
+              containerPort: 8080
+              protocol: TCP
+
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+
+          # Startup: verify Python/torch env before main process
+          startupProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import torch; print('ok')"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 6
+
+          # Liveness: lightweight check; long period for CPU-bound training
+          livenessProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import sys; sys.exit(0)"
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
+
+          volumeMounts:
+            - name: data
+              mountPath: /app/Data
+              readOnly: true
+            - name: checkpoints
+              mountPath: /app/checkpoints
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: biometric-data
+        - name: checkpoints
+          persistentVolumeClaim:
+            claimName: biometric-checkpoints

@@ -1,0 +1,4 @@
+# [Phase 4] Benchmark entry point. Composes data config + benchmark sweep params.
+defaults:
+  - data/default
+  - benchmark/default

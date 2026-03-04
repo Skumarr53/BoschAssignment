@@ -1,0 +1,18 @@
+# [Phase 6c] ClusterIP Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "biometric-mlops.fullname" . }}
+  namespace: {{ include "biometric-mlops.namespace" . }}
+  labels:
+    {{- include "biometric-mlops.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app: biometric-mlops
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: metrics
+      port: 8080
+      targetPort: 8080
+      protocol: TCP

@@ -1,0 +1,13 @@
+# [Phase 6b/6e] Namespace for biometric MLOps workloads
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+# Pod Security: enforce restricted policy (non-root, read-only fs)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: biometric-mlops
+  labels:
+    app.kubernetes.io/name: biometric-mlops
+    app.kubernetes.io/part-of: bosch-mlops-evaluation
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

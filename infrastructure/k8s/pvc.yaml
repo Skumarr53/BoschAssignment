@@ -1,0 +1,32 @@
+# [Phase 6b] PersistentVolumeClaims for data and model artifacts
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: biometric-data
+  namespace: biometric-mlops
+  labels:
+    app: biometric-mlops
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+  # storageClassName: default  # Use cluster default
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: biometric-checkpoints
+  namespace: biometric-mlops
+  labels:
+    app: biometric-mlops
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  # storageClassName: default

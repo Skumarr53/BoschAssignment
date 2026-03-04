@@ -1,0 +1,30 @@
+# [Phase 6b] HorizontalPodAutoscaler for CPU/memory
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+# Training typically runs single-replica; HPA allows scale-out for inference
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: biometric-mlops-hpa
+  namespace: biometric-mlops
+  labels:
+    app: biometric-mlops
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: biometric-mlops
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

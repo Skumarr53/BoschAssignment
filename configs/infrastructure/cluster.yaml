@@ -1,0 +1,6 @@
+# [Scalability] Cluster/production environment.
+# Override paths via CLI or env: data.data_root=/mnt/data, CHECKPOINT_DIR=/mnt/ckpt
+# Launched via: torchrun --nproc_per_node=N scripts/train.py infrastructure=cluster
+data_root: Data
+checkpoint_dir: checkpoints
+distributed: true

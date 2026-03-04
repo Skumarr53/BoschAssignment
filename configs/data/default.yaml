@@ -1,0 +1,19 @@
+# Data configuration
+defaults:
+  - _self_
+  - parallel
+
+data_root: Data
+batch_size: 16
+num_workers: 4
+
+# split_by_sample: false = by subject (plan default, open-set val)
+# split_by_sample: true = by sample (closed-set val, meaningful val_accuracy for dev)
+split_by_sample: true
+
+# PyArrow metadata cache (optional; speeds up dataset init)
+cache_filename: biometric_metadata.parquet
+
+# Preprocessing (per-modality)
+fingerprint_size: [96, 96]
+iris_size: [224, 224]

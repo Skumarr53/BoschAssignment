@@ -1,0 +1,38 @@
+# [Phase 6c] PersistentVolumeClaims
+{{- if .Values.persistence.data.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "biometric-mlops.fullname" . }}-data
+  namespace: {{ include "biometric-mlops.namespace" . }}
+  labels:
+    {{- include "biometric-mlops.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: {{ .Values.persistence.data.size }}
+  {{- if .Values.persistence.data.storageClass }}
+  storageClassName: {{ .Values.persistence.data.storageClass }}
+  {{- end }}
+---
+{{- end }}
+{{- if .Values.persistence.checkpoints.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "biometric-mlops.fullname" . }}-checkpoints
+  namespace: {{ include "biometric-mlops.namespace" . }}
+  labels:
+    {{- include "biometric-mlops.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.checkpoints.size }}
+  {{- if .Values.persistence.checkpoints.storageClass }}
+  storageClassName: {{ .Values.persistence.checkpoints.storageClass }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,19 @@
+# [Phase 6c] Dev environment overrides
+environment: dev
+replicaCount: 1
+resources:
+  requests:
+    memory: "1Gi"
+    cpu: "500m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+persistence:
+  data:
+    size: 512Mi
+  checkpoints:
+    size: 2Gi
+autoscaling:
+  enabled: false
+config:
+  logLevel: "DEBUG"

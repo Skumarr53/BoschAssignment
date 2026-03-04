@@ -1,0 +1,15 @@
+# [Phase 4] DataLoader benchmark sweep parameters.
+num_workers: [0, 2, 4, 8]
+batch_sizes: [8, 16, 32]
+warmup_batches: 5
+measure_batches: 50
+
+# [Phase 4 Part 3] Extended comparisons (focused runs, not full cross-product)
+compare_pin_memory: true      # pin_memory true vs false @ nw=4, bs=16
+compare_prefetch_factor: true # prefetch_factor 2,4,8 @ nw=4, bs=16
+compare_persistent_workers: true  # persistent_workers true vs false @ nw=4, bs=16
+compare_data_source: true    # use_cache true vs false → init time
+
+# Output
+save_charts: true
+profile: true  # benchmark.profile=true to run cProfile on one run

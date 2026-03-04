@@ -1,0 +1,35 @@
+# [Phase 6a] Local dev with Docker Compose
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+# Usage: from project root: docker compose -f infrastructure/compose.yaml up
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/Dockerfile.dev
+    volumes:
+      - ../src:/app/src:ro
+      - ../configs:/app/configs:ro
+      - ../scripts:/app/scripts:ro
+      - ../Data:/app/Data
+      - ../checkpoints:/app/checkpoints
+    environment:
+      - PYTHONPATH=/app/src
+    command: ["python", "scripts/train.py"]
+    profiles:
+      - dev
+
+  infer:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/Dockerfile.dev
+    volumes:
+      - ../src:/app/src:ro
+      - ../configs:/app/configs:ro
+      - ../scripts:/app/scripts:ro
+      - ../Data:/app/Data:ro
+      - ../checkpoints:/app/checkpoints
+    environment:
+      - PYTHONPATH=/app/src
+    command: ["python", "scripts/infer.py"]
+    profiles:
+      - dev

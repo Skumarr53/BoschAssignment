@@ -1,0 +1,115 @@
+# [Phase 6c] Deployment for biometric training workload
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "biometric-mlops.fullname" . }}
+  namespace: {{ include "biometric-mlops.namespace" . }}
+  labels:
+    {{- include "biometric-mlops.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: biometric-mlops
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: biometric-mlops
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      securityContext:
+        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: biometric
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          command:
+            - python
+            - scripts/train.py
+          args:
+            {{- toYaml .Values.config.trainOverrides | nindent 12 }}
+
+          env:
+            - name: PYTHONPATH
+              value: /app/src
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "biometric-mlops.fullname" . }}-config
+                  key: LOG_LEVEL
+            - name: DATA_ROOT
+              value: /app/Data
+            - name: CHECKPOINT_DIR
+              value: /app/checkpoints
+
+          ports:
+            - name: metrics
+              containerPort: 8080
+              protocol: TCP
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          startupProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import torch; print('ok')"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 6
+
+          livenessProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import sys; sys.exit(0)"
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
+
+          volumeMounts:
+            {{- if .Values.persistence.data.enabled }}
+            - name: data
+              mountPath: /app/Data
+              readOnly: true
+            {{- end }}
+            {{- if .Values.persistence.checkpoints.enabled }}
+            - name: checkpoints
+              mountPath: /app/checkpoints
+            {{- end }}
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+      volumes:
+        {{- if .Values.persistence.data.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "biometric-mlops.fullname" . }}-data
+        {{- end }}
+        {{- if .Values.persistence.checkpoints.enabled }}
+        - name: checkpoints
+          persistentVolumeClaim:
+            claimName: {{ include "biometric-mlops.fullname" . }}-checkpoints
+        {{- end }}

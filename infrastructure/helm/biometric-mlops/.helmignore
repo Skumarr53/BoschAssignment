@@ -1,0 +1,4 @@
+# Helm ignore
+*.swp
+*.bak
+.DS_Store

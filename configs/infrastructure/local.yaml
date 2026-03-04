@@ -1,0 +1,7 @@
+# [Scalability] Local/dev environment — project-relative paths.
+# Used when running on a single machine (laptop, dev server).
+# Override via: infrastructure=cluster for production.
+data_root: Data
+checkpoint_dir: checkpoints
+# Distributed: disabled (single process)
+distributed: false

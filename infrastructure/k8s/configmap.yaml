@@ -1,0 +1,12 @@
+# [Phase 6b] ConfigMap for Hydra config injection
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+# Deployment uses configMapKeyRef for LOG_LEVEL; DATA_ROOT/CHECKPOINT_DIR from PVC mounts
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: biometric-config
+  namespace: biometric-mlops
+  labels:
+    app: biometric-mlops
+data:
+  LOG_LEVEL: "INFO"

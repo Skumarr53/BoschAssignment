@@ -1,0 +1,19 @@
+# Parallel preprocessing settings (Phase 1d)
+# Integrates Ray/multiprocessing into training when use_parallel_preprocess: true
+
+# Enable parallel preprocessing in DataModule (Task 3: Parallel or distributed preprocessing)
+use_parallel_preprocess: true
+
+# Backend: "ray" (default, Ray Data) or "multiprocessing"/"pool" (ProcessPoolExecutor)
+backend: multiprocessing #ray
+
+# ProcessPoolExecutor settings
+max_workers: null  # null = cpu_count - 1
+
+# Ray Data settings (when backend: ray)
+num_cpus_per_task: 1.0
+
+# Transform config passed to preprocessing
+transform_config:
+  size: [96, 96]  # fingerprint default; iris uses [224, 224] per modality
+  train: false

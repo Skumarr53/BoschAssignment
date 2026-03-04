@@ -1,0 +1,17 @@
+# [Phase 5b] Exclude from Docker build context
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.benchmarks
+.ruff_cache
+*.egg-info
+dist
+build
+docs
+tests
+*.md
+.env
+.env.*

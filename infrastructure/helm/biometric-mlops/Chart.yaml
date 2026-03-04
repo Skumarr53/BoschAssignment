@@ -1,0 +1,15 @@
+# [Phase 6c] Helm chart for biometric MLOps
+# Plan: bosch_mlops_evaluation_plan_7132afe9
+apiVersion: v2
+name: biometric-mlops
+description: Biometric MLOps training and inference workload
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - biometric
+  - mlops
+  - pytorch
+maintainers:
+  - name: Bosch MLOps
+    email: mlops@example.com
