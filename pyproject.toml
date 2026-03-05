@@ -21,6 +21,7 @@ dev = [
     "pytest-cov>=4.1.0",
     "pytest-asyncio>=0.23.0",
     "pytest-benchmark>=4.0.0",
+    "pytest-timeout>=2.2.0",
     "ruff>=0.1.0",
     "mypy>=1.8.0",
     "mlflow>=2.10.0",
@@ -74,6 +75,7 @@ addopts = "-v --tb=short"
 pythonpath = ["src"]
 markers = [
     "performance: marks tests as performance benchmarks (deselect with '-m \"not performance\"')",
+    "ci_skip_parallel: skip in CI (ProcessPoolExecutor/Ray hangs in GitHub Actions)",
 ]
 
 [tool.coverage.run]

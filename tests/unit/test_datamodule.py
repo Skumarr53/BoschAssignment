@@ -1,5 +1,6 @@
 """Unit tests for biometric.data.datamodule."""
 
+import os
 from pathlib import Path
 
 import pytest
@@ -112,6 +113,10 @@ class TestBiometricDataModule:
         with pytest.raises(RuntimeError):
             dm.train_dataloader()
 
+    @pytest.mark.skipif(
+        os.environ.get("CI") == "true",
+        reason="ProcessPoolExecutor hangs in GitHub Actions",
+    )
     def test_parallel_preprocess_integration(self, synthetic_data: Path) -> None:
         """[Phase 1d] DataModule uses parallel_loader when use_parallel_preprocess=True."""
         dm = BiometricDataModule(

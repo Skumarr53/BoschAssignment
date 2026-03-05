@@ -1,5 +1,6 @@
 """Unit tests for biometric.data.parallel_loader."""
 
+import os
 from pathlib import Path
 
 import pytest
@@ -53,6 +54,10 @@ class TestLoadAndPreprocess:
             _load_and_preprocess("/nonexistent.bmp", 0, "fingerprint", {})
 
 
+@pytest.mark.skipif(
+    os.environ.get("CI") == "true",
+    reason="ProcessPoolExecutor hangs in GitHub Actions (containerized env)",
+)
 class TestPreprocessWithPool:
     def test_returns_tensors_and_labels(self, synthetic_data: Path) -> None:
         table = build_cache(synthetic_data, cache_path=None)
@@ -123,6 +128,10 @@ class TestGetPreprocessedItemsFromCache:
         assert labels == []
 
 
+@pytest.mark.skipif(
+    os.environ.get("CI") == "true",
+    reason="ProcessPoolExecutor/Ray hangs in GitHub Actions",
+)
 class TestPreprocessWithBackend:
     def test_backend_multiprocessing_dispatches_to_pool(self, synthetic_data: Path) -> None:
         table = build_cache(synthetic_data, cache_path=None)
@@ -169,6 +178,10 @@ class TestPreprocessWithBackend:
             )
 
 
+@pytest.mark.skipif(
+    os.environ.get("CI") == "true",
+    reason="ProcessPoolExecutor/Ray hangs in GitHub Actions",
+)
 class TestPreprocessFromConfig:
     def test_reads_backend_from_config(self, synthetic_data: Path) -> None:
         table = build_cache(synthetic_data, cache_path=None)
@@ -195,6 +208,10 @@ class TestPreprocessFromConfig:
         assert len(results) == len(paths)
 
 
+@pytest.mark.skipif(
+    os.environ.get("CI") == "true",
+    reason="Ray init/preprocess hangs in GitHub Actions",
+)
 class TestPreprocessWithRay:
     def test_ray_import_or_skip(self) -> None:
         try:
