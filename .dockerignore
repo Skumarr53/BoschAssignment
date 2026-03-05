@@ -13,5 +13,6 @@ build
 docs
 tests
 *.md
+!README.md
 .env
 .env.*
