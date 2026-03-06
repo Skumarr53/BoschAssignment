@@ -4,6 +4,67 @@
 
 ---
 
+## 0. High-Level Architecture
+
+```mermaid
+flowchart TB
+    subgraph dataLayer [Data Layer]
+        RawData[Raw BMP Files]
+        ArrowCache[PyArrow Cache]
+        Dataset[MultimodalDataset]
+        ParallelLoader[Ray/Multiprocessing]
+    end
+
+    subgraph modelLayer [Model Layer]
+        FPEnc[FingerprintEncoder]
+        IrisEnc[IrisEncoder]
+        Fusion[FusionModel]
+    end
+
+    subgraph trainingLayer [Training Layer]
+        Trainer[Custom Trainer]
+        MLflow[MLflow]
+    end
+
+    subgraph infraLayer [Infrastructure]
+        Docker[Docker]
+        K8s[Kubernetes]
+        Helm[Helm]
+        TF[Terraform AKS]
+    end
+
+    RawData --> ArrowCache --> Dataset
+    ParallelLoader --> Dataset
+    Dataset --> Trainer
+    FPEnc --> Fusion
+    IrisEnc --> Fusion
+    Fusion --> Trainer
+    Trainer --> MLflow
+    Docker --> K8s --> Helm
+    TF --> K8s
+```
+
+### Tech Stack by Layer
+
+| Layer | Component | Tool / Framework |
+|-------|-----------|------------------|
+| Data | Metadata cache | PyArrow, Parquet |
+| Data | Parallel preprocessing | Ray, multiprocessing |
+| Data | Transforms | torchvision.transforms.v2 |
+| Model | Encoders, fusion | PyTorch nn.Module |
+| Training | Loop, AMP, callbacks | Custom Trainer |
+| Training | Experiment tracking | MLflow |
+| Config | Hyperparameters | Hydra |
+| Quality | Lint, format, types | ruff, mypy |
+| Quality | Tests | pytest |
+| Quality | Security | pip-audit, bandit, gitleaks |
+| Infra | Container | Docker (multi-stage) |
+| Infra | Orchestration | Kubernetes, Helm |
+| Infra | IaC | Terraform (Azure) |
+| CI/CD | Pipeline | GitHub Actions |
+
+---
+
 ## 1. Context (C4 Level 1)
 
 The system provides production-grade ML infrastructure for training and inference of a multimodal biometric model (iris + fingerprint fusion). An MLOps engineer interacts with it via CLI scripts; the system consumes raw image data, trains models, and produces checkpoints and predictions.
@@ -28,12 +89,6 @@ graph TB
     System -->|Read images, metadata| Dataset
     System -->|Log params, metrics, artifacts| MLflow
     System -->|Deploy container| Infra
-
-    style System fill:#1168bd
-    style Engineer fill:#08427b
-    style Dataset fill:#999
-    style MLflow fill:#999
-    style Infra fill:#999
 ```
 
 ---
@@ -77,11 +132,6 @@ graph TB
     Callbacks --> Trainer
     Reproducibility --> Trainer
     FusionModel --> Pipeline
-
-    style DataModule fill:#4ecdc4
-    style FusionModel fill:#4ecdc4
-    style Trainer fill:#4ecdc4
-    style Pipeline fill:#4ecdc4
 ```
 
 ---
@@ -106,7 +156,7 @@ graph TB
 |-----------|----------------|
 | `fingerprint_encoder` | CNN branch for fingerprint images (1ch, 96×96). |
 | `iris_encoder` | CNN branch for iris images (3ch, 224×224). |
-| `fusion_model` | Concatenates embeddings → `nn.Linear` → logits. Port from reference Kaggle notebook (see `model_port_notes.md`). |
+| `fusion_model` | Concatenates embeddings → `nn.Linear` → logits. |
 | `base` | Shared base classes for encoders. |
 
 ### 3.3 Training Layer (`src/biometric/training/`)
@@ -193,8 +243,6 @@ graph TB
     CD --> K8s
     Helm --> K8s
     TF --> K8s
-
-    style K8s fill:#4ecdc4
 ```
 
 ---
@@ -213,6 +261,4 @@ graph TB
 - [C4 Model](https://c4model.com/)
 - [Design Decisions](./design_decisions.md)
 - [Scalability Analysis](./scalability_analysis.md)
-- [Model Port Notes](./model_port_notes.md)
 - [Performance Benchmarks](./performance_benchmarks.md)
-- [Phase 8 Verification](./phase8_verification.md)

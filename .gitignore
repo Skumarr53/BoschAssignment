@@ -14,8 +14,10 @@ build/
 # IDE
 .idea/
 .vscode/
+.cursor/
 *.swp
 *.swo
+desktop.ini
 
 # Testing
 .coverage
