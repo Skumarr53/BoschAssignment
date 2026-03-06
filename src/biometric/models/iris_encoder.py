@@ -1,6 +1,6 @@
 """Iris encoder: 224×224 RGB → embedding.
 
-Port of reference Kaggle notebook iris branch.
+Iris branch encoder for multimodal fusion.
 Architecture: Conv blocks (Conv2d → BatchNorm2d → ReLU → MaxPool2d) → Flatten → Dense.
 Larger input than fingerprint → more conv stages.
 """

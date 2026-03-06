@@ -48,8 +48,7 @@
 
 ## Charts
 
-![heatmap](benchmark_heatmap.png)
-![bar](benchmark_bar.png)
+Run `uv run python scripts/benchmark.py` to generate `benchmark_heatmap.png` and `benchmark_bar.png` in the output directory.
 
 
 ## Notes

@@ -31,3 +31,8 @@ output "storage_primary_connection_string" {
   value       = azurerm_storage_account.data.primary_connection_string
   sensitive   = true
 }
+
+output "aks_get_credentials" {
+  description = "az aks get-credentials command to configure kubectl for AKS"
+  value       = "az aks get-credentials --resource-group ${azurerm_resource_group.this.name} --name ${azurerm_kubernetes_cluster.aks.name} --overwrite-existing"
+}

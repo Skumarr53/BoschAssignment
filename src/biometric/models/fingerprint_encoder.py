@@ -1,6 +1,6 @@
 """Fingerprint encoder: 96×96 grayscale → embedding.
 
-Port of reference Kaggle notebook fingerprint branch.
+Fingerprint branch encoder for multimodal fusion.
 Architecture: Conv blocks (Conv2d → BatchNorm2d → ReLU → MaxPool2d) → Flatten → Dense.
 """
 

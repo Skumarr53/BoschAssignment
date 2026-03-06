@@ -2,9 +2,26 @@
 
 Production-grade MLOps infrastructure for multimodal biometric recognition (iris + fingerprint).
 
+## Tech Stack
 
+| Layer | Tools |
+|-------|-------|
+| **Runtime** | Python 3.12, PyTorch 2.x |
+| **Package** | uv (lockfile, deterministic installs) |
+| **Config** | Hydra (composition, CLI overrides) |
+| **Data** | PyArrow/Parquet (metadata cache), Ray/multiprocessing (parallel preprocessing), torchvision.transforms |
+| **Training** | Custom Trainer (AMP, gradient accumulation, callbacks), MLflow (experiment tracking) |
+| **Quality** | ruff, mypy, pytest, pre-commit, pip-audit, bandit, gitleaks |
+| **Infra** | Docker, Kubernetes, Helm, Terraform (Azure AKS/ACR/Storage) |
+| **CI/CD** | GitHub Actions (lint, test, build, security scan) |
 
-## this is test comment
+## Quick Start
+
+```bash
+uv sync
+make docker-build
+make docker-run ARGS="training.epochs=1"
+```
 
 ## Setup
 
@@ -30,29 +47,12 @@ uv run ruff format src/ tests/
 
 ## Documentation
 
-- [Learning Challenge](docs/LEARNING_CHALLENGE.md) — End-to-end hands-on guide to own every component (what, why, how)
 - [Architecture](docs/architecture.md) — C4-style system and component diagrams
+- [Tech Stack](docs/TECH_STACK.md) — Consolidated tools, frameworks, and practices
 - [Design Decisions](docs/design_decisions.md) — ADRs for key technical choices
 - [Scalability Analysis](docs/scalability_analysis.md) — Bottleneck and scaling strategies
 - [Performance Benchmarks](docs/performance_benchmarks.md) — DataLoader benchmark results
-- [Model Port Notes](docs/model_port_notes.md) — Keras → PyTorch mapping
-- [Phase 8 Verification](docs/phase8_verification.md) — Evaluation criteria checklist and quality gates
 
 ## Security
 
 See [SECURITY.md](SECURITY.md) for security practices, vulnerability reporting, and hardening (non-root containers, read-only filesystem, pip-audit, bandit, gitleaks).
-
-## Troubleshooting
-
-### `AttributeError: module 'triton' has no attribute 'language'`
-
-This occurs when a ROCm-specific or minimal `triton` package (without `triton.language`) is installed alongside PyTorch. PyTorch's `torch._dynamo` expects the full triton-lang API.
-
-**Fix:** Uninstall the incompatible triton and let `uv` reinstall from the lockfile:
-
-```bash
-uv pip uninstall triton
-uv run python scripts/train.py   # uv will reinstall correct triton from lockfile
-```
-
-The PyPI `triton` wheel (triton-lang) provides the full API. ROCm builds may pull a minimal triton; using the standard wheel resolves the issue.
