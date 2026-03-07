@@ -27,6 +27,8 @@ jobs:
           load: true
           push: false
           tags: biometric-mlops:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Validate K8s manifests
         run: make k8s-validate
       - name: Lint Helm chart
