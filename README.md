@@ -57,4 +57,4 @@ uv run ruff format src/ tests/
 
 See [SECURITY.md](SECURITY.md) for security practices, vulnerability reporting, and hardening (non-root containers, read-only filesystem, pip-audit, bandit, gitleaks).
 
-adding comment to test cache usage in build process 
+adding comment to test cache usage in build process
